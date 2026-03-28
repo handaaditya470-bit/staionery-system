@@ -1,0 +1,50 @@
+def calculate_order(request):
+    if request.method == "POST":
+
+        # Stationery
+        price = int(request.POST.get("product"))
+        quantity = int(request.POST.get("quantity"))
+
+        subtotal_stationery = price * quantity
+
+        if quantity > 20:
+            discount_stationery = subtotal_stationery * 0.10
+        else:
+            discount_stationery = 0
+
+        total_stationery = subtotal_stationery - discount_stationery
+
+
+        # Printing
+        pages = int(request.POST.get("pages"))
+        per_page = int(request.POST.get("print_type"))
+
+        subtotal_print = pages * per_page
+
+        if request.POST.get("urgent"):
+            subtotal_print += 50
+
+        if pages > 100:
+            discount_print = subtotal_print * 0.10
+        else:
+            discount_print = 0
+
+        total_print = subtotal_print - discount_print
+
+
+        # Final
+        grand_subtotal = total_stationery + total_print
+        tax = grand_subtotal * 0.10
+        delivery = 50
+
+        grand_total = grand_subtotal + tax + delivery
+
+        return render(request, "invoice.html", {
+            "stationery": total_stationery,
+            "printing": total_print,
+            "tax": tax,
+            "delivery": delivery,
+            "grand_total": grand_total
+        })
+
+
